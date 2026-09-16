@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Online Retro Library</title>
+  <style>
+    body {
+      background-color: #121212;
+      color: #ffffff;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 30px;
+    }
+    #menu-container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    #search-bar {
+      width: 100%;
+      max-width: 400px;
+      padding: 12px;
+      margin-bottom: 20px;
+      border-radius: 6px;
+      border: 1px solid #444;
+      background: #1e1e1e;
+      color: white;
+      font-size: 1em;
+      box-sizing: border-box;
+    }
+    #search-bar:focus {
+      outline: none;
+      border-color: #6cc27d;
+    }
+    .game-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      justify-content: center;
+    }
+    .game-button {
+      background: #1e1e1e;
+      border: 2px solid #333;
+      color: #6cc27d;
+      padding: 15px 25px;
+      font-size: 1.1em;
+      font-weight: bold;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .game-button:hover {
+      background: #2a2a2a;
+      border-color: #6cc27d;
+      transform: scale(1.05);
+    }
+    #player-wrapper {
+      display: none;
+    }
+    #player-container {
+      width: 640px;
+      height: 480px;
+      margin: 0 auto;
+      background-color: #000;
+      border-radius: 6px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    }
+    .back-btn {
+      margin-bottom: 20px;
+      padding: 10px 20px;
+      background: #444;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .back-btn:hover { background: #666; }
+  </style>
+</head>
+<body>
+
+  <!-- Menu Screen -->
+  <div id="menu-container">
+    <h2>Choose a Game</h2>
+    
+    <input type="text" id="search-bar" placeholder="Search for a game...">
+    
+    <div class="game-grid" id="game-list">
+      
+      <!-- ADD YOUR GAMES HERE -->
+      <!-- Make sure data-path matches the exact file name -->
+      <button class="game-button" data-path="pokemon-emerald.gba">Pokemon Emerald</button>
+      <button class="game-button" data-path="mario-advance.gba">Super Mario Advance</button>
+      <button class="game-button" data-path="zelda-minish.gba">Zelda: Minish Cap</button>
+
+    </div>
+  </div>
+
+  <!-- Emulator Screen -->
+  <div id="player-wrapper">
+    <button class="back-btn" onclick="location.reload()">⬅ Back to Menu</button>
+    <div id="player-container">
+      <div id="game"></div>
+    </div>
+  </div>
+
+  <script>
+    const menuContainer = document.getElementById("menu-container");
+    const playerWrapper = document.getElementById("player-wrapper");
+    const searchBar = document.getElementById("search-bar");
+    const gameButtons = document.querySelectorAll('.game-button');
+
+    // Search Filter Logic
+    searchBar.addEventListener('input', (e) => {
+      const searchTerm = e.target.value.toLowerCase();
+      gameButtons.forEach(btn => {
+        if (btn.textContent.toLowerCase().includes(searchTerm)) {
+          btn.style.display = 'block';
+        } else {
+          btn.style.display = 'none';
+        }
+      });
+    });
+
+    // Button Click Logic
+    gameButtons.forEach(button => {
+      button.addEventListener('click', function() {
+        const gamePath = this.getAttribute('data-path');
+        
+        menuContainer.style.display = 'none';
+        playerWrapper.style.display = 'block';
+
+        window.EJS_player = '#game';
+        window.EJS_core = 'gba';
+        window.EJS_gameUrl = gamePath; 
+        window.EJS_pathtodata = 'https://cdn.emulatorjs.org/latest/data/';
+        
+        const script = document.createElement('script');
+        script.src = 'https://cdn.emulatorjs.org/latest/data/loader.js';
+        document.body.appendChild(script);
+      });
+    });
+  </script>
+</body>
+</html>
